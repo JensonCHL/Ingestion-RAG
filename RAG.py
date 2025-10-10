@@ -687,18 +687,9 @@ def delete_document_by_source(source_name: str):
 # AUTHENTICATION
 # ===============================
 def check_password():
-    """Returns `True` if the user had the correct password."""
-
-    def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        if (hmac.compare_digest(st.session_state["email"], AUTH_EMAIL) and
-                hmac.compare_digest(st.session_state["password"], AUTH_PASSWORD)):
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]  # Don't store the password.
-        else:
-            st.session_state["password_correct"] = False
-
-    # Return True if the email and password is validated.
+    """Returns `True` if the user has entered the correct email and password."""
+    
+    # Return True if the user is already authenticated
     if st.session_state.get("password_correct", False):
         return True
 
@@ -706,19 +697,34 @@ def check_password():
     st.title("🔐 Login")
     st.caption("Please enter your credentials to access the RAG application.")
     
+    # Callback function to check credentials
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if (hmac.compare_digest(st.session_state["email"], AUTH_EMAIL) and
+                hmac.compare_digest(st.session_state["password"], AUTH_PASSWORD)):
+            st.session_state["password_correct"] = True
+            st.success("Login successful!")
+        else:
+            st.session_state["password_correct"] = False
+            st.error("😕 Email or password incorrect")
+
+    # Input fields for email and password
     st.text_input("Email", key="email", autocomplete="email")
-    st.text_input("Password", type="password", key="password", on_change=password_entered)
+    st.text_input("Password", type="password", key="password")
+    st.button("Login", on_click=password_entered)
     
-    if "password_correct" in st.session_state:
-        st.error("😕 Email or password incorrect")
+    # Always return False when showing the login form
+    # This allows the form to be displayed without calling st.stop()
     return False
 
 # If AUTH_EMAIL and AUTH_PASSWORD are not set, skip authentication
 if not AUTH_EMAIL or not AUTH_PASSWORD:
     st.warning("⚠️ Authentication not configured. Set AUTH_EMAIL and AUTH_PASSWORD environment variables to enable authentication.")
 else:
-    if not check_password():
-        st.stop()  # Do not continue if check_password is not True.
+    if not st.session_state.get("password_correct", False):
+        # Show login form but don't call st.stop()
+        check_password()
+        st.stop()
 
 # ===============================
 # UI
