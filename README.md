@@ -4,6 +4,33 @@
 - Docker and Docker Compose installed
 - Your configured `.env` file
 
+## Installing Docker Compose on Ubuntu (Docker already installed)
+
+Since you already have Docker running on your VM, you only need to install Docker Compose:
+
+1. **Install Docker Compose:**
+   ```bash
+   sudo apt update
+   sudo apt install docker-compose
+   ```
+
+2. **Verify installation:**
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+3. **If the above doesn't work, install Docker Compose manually:**
+   ```bash
+   sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   sudo chmod +x /usr/local/bin/docker-compose
+   ```
+
+4. **Verify the manual installation:**
+   ```bash
+   docker-compose --version
+   ```
+
 ## Quick Start (Development)
 
 1. Clone or copy your application files to the server
@@ -13,6 +40,16 @@
    docker-compose up --build
    ```
 4. Access the application at `http://localhost:8501`
+
+## Production Deployment with Port 80
+
+1. Clone or copy your application files to the server
+2. Ensure your `.env` file is in the root directory
+3. Build and run the production stack:
+   ```bash
+   docker-compose -f docker-compose.prod.yml up --build -d
+   ```
+4. Access the application at `http://YOUR_SERVER_IP` (port 80)
 
 ## Production Deployment (Raw HTTP - No Domain)
 
