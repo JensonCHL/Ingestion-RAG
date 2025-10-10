@@ -1,0 +1,4 @@
+# Exclude only the .env file which contains sensitive credentials
+.env
+
+# Optional: Add any other files you want to exclude
