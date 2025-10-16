@@ -8,6 +8,13 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# === Streamlit server config ===
+# These lines allow public access via Nginx (fixes blank page issue)
+ENV STREAMLIT_SERVER_ENABLE_CORS=false
+ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
+ENV STREAMLIT_SERVER_HEADLESS=true
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+
 # Install system dependencies needed for PDF processing and Pillow
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
